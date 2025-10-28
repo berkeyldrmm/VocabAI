@@ -1,73 +1,29 @@
-# React + TypeScript + Vite
+# VocabAI: The AI-Powered Vocabulary Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+VocabAI is a sleek, modern web application designed to help users learn English vocabulary in a dynamic and contextual way. Instead of static definitions, VocabAI leverages the Google Gemini AI to provide rich, in-depth explanations for words, including custom definitions, example sentences, and grammatical analysis.
 
-Currently, two official plugins are available:
+This project is built as a Single Page Application (SPA) using React (Vite), TypeScript, and Tailwind CSS for a beautiful, responsive, and fast user experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<img width="1919" height="979" alt="image" src="https://github.com/user-attachments/assets/e2d21c85-4b33-4214-9834-73ed3ae7e2e5" />
+<img width="1902" height="981" alt="image" src="https://github.com/user-attachments/assets/0d2f698b-a97e-4edc-99f4-58216569f4fe" />
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Core Features
 
-## Expanding the ESLint configuration
+* **AI-Powered Definitions:** Get word definitions in your preferred language (e.g., Turkish), generated instantly by AI.
+* **Contextual Learning:** Each query returns a unique example sentence (in English) to show the word in action.
+* **Grammar Analysis:** The AI provides a detailed explanation of the word's grammatical role within the example sentence (e.g., "it's an adjective modifying 'lecture'").
+* **Browse by Level:** Explore word lists categorized by levels (A1, A2, B1, B2).
+* **Live Search:** Instantly filter words within a selected level using the integrated search bar.
+* **Modern UI/UX:** A beautiful, responsive interface with a "glassmorphism" design, gradient backgrounds, and smooth animations.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* **React:** For building the reactive, component-based user interface.
+* **Vite:** As the next-generation frontend tooling (dev server, bundler).
+* **TypeScript:** For strong type-safety and robust code.
+* **Tailwind CSS:** For all styling and layout, enabling a utility-first, responsive design.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```bash
+npm run dev
