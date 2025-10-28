@@ -1,14 +1,24 @@
 interface SearchBarProps {
   searchTerm: string;
   onSearch: (term: string) => void;
+  onSearchSubmit: (term: string) => void;
 }
 
-export function SearchBar({ searchTerm, onSearch }: SearchBarProps) {
+export function SearchBar({ searchTerm, onSearch, onSearchSubmit }: SearchBarProps) {
+  
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!searchTerm.trim()) return; 
+    
+    onSearchSubmit(searchTerm);
+  };
+
   return (
-    <div className="search-bar w-full max-w-lg my-8">
+    <form className="search-bar w-full max-w-lg my-8" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Seçili seviyede kelime ara..."
+        placeholder="Bir kelime yazın"
         className="
           w-full p-4 rounded-lg 
           bg-white/20 backdrop-blur-sm 
@@ -19,6 +29,6 @@ export function SearchBar({ searchTerm, onSearch }: SearchBarProps) {
         value={searchTerm}
         onChange={(e) => onSearch(e.target.value)}
       />
-    </div>
+    </form>
   );
 }

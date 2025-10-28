@@ -1,11 +1,14 @@
-import type { AIResponse } from '../types/AIResponse'; 
+import type { AIResponse } from '../types/AIResponse';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface WordDetailProps {
   details: AIResponse | null;
   isLoading: boolean;
+  onRegenerateExample: () => void;
+  isRegenerating: boolean;
 }
 
-export function WordDetail({ details, isLoading }: WordDetailProps) {
+export function WordDetail({ details, isLoading, onRegenerateExample, isRegenerating }: WordDetailProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full min-h-[200px]">
@@ -50,6 +53,28 @@ export function WordDetail({ details, isLoading }: WordDetailProps) {
           Örnekteki Yeri
         </h3>
         <p className="text-lg leading-relaxed text-white/90">{details.exampleExplanation}</p>
+
+        <div className="mt-6 flex justify-end"> 
+          <button
+            onClick={onRegenerateExample}
+            disabled={isLoading || isRegenerating} 
+            className="
+              inline-flex items-center justify-center 
+              bg-white/20 hover:bg-white/30 text-white 
+              font-semibold py-2 px-5 rounded-lg transition
+              disabled:opacity-60 disabled:cursor-wait
+            "
+          >
+            {isRegenerating ? (
+              <>
+                <LoadingSpinner />
+                Yenileniyor...
+              </>
+            ) : (
+              "Farklı Bir Örnek Ver"
+            )}
+          </button>
+        </div>
       </section>
     </div>
   );

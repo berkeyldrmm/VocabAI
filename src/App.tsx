@@ -4,6 +4,7 @@ import { WordList } from './components/WordList';
 import { SearchBar } from './components/SearchBar';
 import { WordDetail } from './components/WordDetail';
 import type { AIResponse } from './types/AIResponse';
+import { fetchAIDefinition, fetchNewExample } from './services/apiService';
 
 const allWords: Record<string, string[]> = {
   A1: ['Apple', 'Book', 'Cat'],
@@ -18,12 +19,13 @@ function App() {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [aiDetails, setAiDetails] = useState<AIResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isRegeneratingExample, setIsRegeneratingExample] = useState<boolean>(false);
 
   const handleWordSelect = async (word: string) => {
     setSelectedWord(word);
     setIsLoading(true);
-    setAiDetails(null);
-
+    setAiDetails(null); 
+    
     const response = await fetchAIDefinition(word);
     
     setAiDetails(response);
@@ -33,6 +35,33 @@ function App() {
   const handleBackToHome = () => {
     setSelectedWord(null);
     setAiDetails(null);
+    setSearchTerm('');
+  };
+
+  const handleSearchSubmit = (searchWord: string) => {
+    const formattedWord = searchWord.charAt(0).toUpperCase() + searchWord.slice(1).toLowerCase();
+    
+    handleWordSelect(formattedWord);
+  };
+
+  const handleRegenerateExample = async () => {
+    if (!aiDetails || !aiDetails.word) return;
+    
+    setIsRegeneratingExample(true);
+    
+    try {
+      const newExampleData = await fetchNewExample(aiDetails.word);
+
+      setAiDetails(prevDetails => ({
+        ...prevDetails!,
+        ...newExampleData,
+      }));
+
+    } catch (error) {
+      console.error('Örnek yenileme hatası:', error);
+    } finally {
+      setIsRegeneratingExample(false);
+    }
   };
 
   const wordsForLevel = allWords[selectedLevel] || [];
@@ -55,6 +84,7 @@ function App() {
           <SearchBar 
             searchTerm={searchTerm}
             onSearch={setSearchTerm}
+            onSearchSubmit={handleSearchSubmit} 
           />
           
           <LevelSelector
@@ -82,7 +112,12 @@ function App() {
             </div>
             
             <div className="p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl">
-              <WordDetail details={aiDetails} isLoading={isLoading} />
+              <WordDetail 
+                details={aiDetails} 
+                isLoading={isLoading} 
+                onRegenerateExample={handleRegenerateExample}
+                isRegenerating={isRegeneratingExample}
+              />
             </div>
           </div>
         </div>
@@ -91,12 +126,4 @@ function App() {
   );
 }
 
-async function fetchAIDefinition(word: string): Promise<AIResponse> {
-  return {
-    word: word,
-    definition: 'Tanım bulunamadı.',
-    exampleSentence: 'Örnek cümle bulunamadı.',
-    exampleExplanation: 'Açıklama bulunamadı.'
-  };
-}
 export default App;
