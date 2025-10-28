@@ -1,0 +1,102 @@
+import { useState } from 'react';
+import { LevelSelector } from './components/LevelSelector';
+import { WordList } from './components/WordList';
+import { SearchBar } from './components/SearchBar';
+import { WordDetail } from './components/WordDetail';
+import type { AIResponse } from './types/AIResponse';
+
+const allWords: Record<string, string[]> = {
+  A1: ['Apple', 'Book', 'Cat'],
+  A2: ['House', 'Happy', 'Run'],
+  B1: ['Culture', 'Benefit', 'Analyze'],
+  B2: ['Eloquent', 'Conscious', 'Despite'],
+};
+
+function App() {
+  const [selectedLevel, setSelectedLevel] = useState<string>('A1');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const [aiDetails, setAiDetails] = useState<AIResponse | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleWordSelect = async (word: string) => {
+    setSelectedWord(word);
+    setIsLoading(true);
+    setAiDetails(null);
+
+    const response = await fetchAIDefinition(word);
+    
+    setAiDetails(response);
+    setIsLoading(false);
+  };
+
+  const handleBackToHome = () => {
+    setSelectedWord(null);
+    setAiDetails(null);
+  };
+
+  const wordsForLevel = allWords[selectedLevel] || [];
+  const filteredWords = wordsForLevel.filter(word =>
+    word.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-purple-600 via-indigo-700 to-blue-800 text-white p-4 md:p-12 transition-all duration-500">
+      
+      {!selectedWord ? (
+        <div className="flex flex-col items-center justify-center text-center max-w-3xl mx-auto animate-fade-in">
+          <h1 className="text-6xl md:text-7xl font-bold text-white shadow-lg mb-4">
+            VocabAI
+          </h1>
+          <p className="text-xl text-purple-200 mb-10">
+            Yapay zeka ile kelime öğrenmenin en hızlı yolu.
+          </p>
+
+          <SearchBar 
+            searchTerm={searchTerm}
+            onSearch={setSearchTerm}
+          />
+          
+          <LevelSelector
+            levels={Object.keys(allWords)}
+            selectedLevel={selectedLevel}
+            onSelectLevel={setSelectedLevel}
+          />
+          
+          <WordList
+            words={filteredWords}
+            onWordSelect={handleWordSelect}
+          />
+        </div>
+
+      ) : (
+        <div className="max-w-6xl mx-auto animate-fade-in">
+          <button onClick={handleBackToHome} className="mb-8 bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition">
+            &larr; Geri Dön
+          </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex items-center justify-center p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl">
+              <h2 className="text-6xl md:text-7xl font-bold break-all">
+                {selectedWord}
+              </h2>
+            </div>
+            
+            <div className="p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl">
+              <WordDetail details={aiDetails} isLoading={isLoading} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+async function fetchAIDefinition(word: string): Promise<AIResponse> {
+  return {
+    word: word,
+    definition: 'Tanım bulunamadı.',
+    exampleSentence: 'Örnek cümle bulunamadı.',
+    exampleExplanation: 'Açıklama bulunamadı.'
+  };
+}
+export default App;
