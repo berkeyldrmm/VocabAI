@@ -24,6 +24,3 @@ This project is built as a Single Page Application (SPA) using React (Vite), Typ
 * **Vite:** As the next-generation frontend tooling (dev server, bundler).
 * **TypeScript:** For strong type-safety and robust code.
 * **Tailwind CSS:** For all styling and layout, enabling a utility-first, responsive design.
-
-```bash
-npm run dev
