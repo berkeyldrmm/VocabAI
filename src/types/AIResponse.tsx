@@ -1,6 +1,8 @@
 export interface AIResponse {
-  word: string;
+  corrected_word: string;
+  word_level: string;
   definition: string;
-  exampleSentence: string;
-  exampleExplanation: string;
+  example: string;
+  explanation: string;
+  isCorrected: boolean;
 }

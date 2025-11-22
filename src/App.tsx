@@ -4,14 +4,7 @@ import { WordList } from './components/WordList';
 import { SearchBar } from './components/SearchBar';
 import { WordDetail } from './components/WordDetail';
 import type { AIResponse } from './types/AIResponse';
-import { fetchAIDefinition, fetchNewExample } from './services/apiService';
-
-const allWords: Record<string, string[]> = {
-  A1: ['Apple', 'Book', 'Cat'],
-  A2: ['House', 'Happy', 'Run'],
-  B1: ['Culture', 'Benefit', 'Analyze'],
-  B2: ['Eloquent', 'Conscious', 'Despite'],
-};
+import { fetchAIDefinition } from './services/apiService';
 
 function App() {
   const [selectedLevel, setSelectedLevel] = useState<string>('A1');
@@ -19,7 +12,7 @@ function App() {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [aiDetails, setAiDetails] = useState<AIResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isRegeneratingExample, setIsRegeneratingExample] = useState<boolean>(false);
+  // const [isRegeneratingExample, setIsRegeneratingExample] = useState<boolean>(false);
 
   const handleWordSelect = async (word: string) => {
     setSelectedWord(word);
@@ -45,27 +38,24 @@ function App() {
   };
 
   const handleRegenerateExample = async () => {
-    if (!aiDetails || !aiDetails.word) return;
+    if (!aiDetails || !aiDetails.corrected_word) return;
     
-    setIsRegeneratingExample(true);
+    setIsLoading(true);
     
     try {
-      const newExampleData = await fetchNewExample(aiDetails.word);
+      const newExampleData = await fetchAIDefinition(aiDetails.corrected_word);
 
-      setAiDetails(prevDetails => ({
-        ...prevDetails!,
-        ...newExampleData,
-      }));
+      setAiDetails(newExampleData);
 
     } catch (error) {
       console.error('Örnek yenileme hatası:', error);
     } finally {
-      setIsRegeneratingExample(false);
+      setIsLoading(false);
     }
   };
 
   const wordsForLevel = allWords[selectedLevel] || [];
-  const filteredWords = wordsForLevel.filter(word =>
+  const filteredWords = wordsForLevel.filter(word => 
     word.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -116,7 +106,6 @@ function App() {
                 details={aiDetails} 
                 isLoading={isLoading} 
                 onRegenerateExample={handleRegenerateExample}
-                isRegenerating={isRegeneratingExample}
               />
             </div>
           </div>
