@@ -18,7 +18,7 @@ export function LevelSelector({ levels, selectedLevel, onSelectLevel }: LevelSel
                 : 'bg-white/20 hover:bg-white/30 text-white'
               }
             `}
-            onClick={() => onSelectLevel(level)}
+            onClick={() => {onSelectLevel(level)}}
           >
             {level}
           </button>

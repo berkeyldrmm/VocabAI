@@ -1,5 +1,4 @@
 import type { AIResponse } from '../types/AIResponse';
-import { LoadingSpinner } from './LoadingSpinner';
 
 interface WordDetailProps {
   details: AIResponse | null;
@@ -28,7 +27,12 @@ export function WordDetail({ details, isLoading, onRegenerateExample }: WordDeta
   return (
     <div className="word-detail flex flex-col gap-6">
       <h2 className="text-4xl font-bold text-white opacity-60">
-        {details.corrected_word}
+        <span className="text-2xl font-bold text-purple-200">
+          {details.corrected_word}
+        </span>
+        {details.isCorrected ? (<><span className="bg-purple-400/50 text-purple-100 text-sm font-sm px-3 py-1 ml-2 rounded">
+          Düzeltilmiş
+        </span></>) : ""}
       </h2>
       
       <section>
@@ -64,14 +68,7 @@ export function WordDetail({ details, isLoading, onRegenerateExample }: WordDeta
               disabled:opacity-60 disabled:cursor-wait
             "
           >
-            {isLoading ? (
-              <>
-                <LoadingSpinner />
-                Yenileniyor...
-              </>
-            ) : (
-              "Farklı Bir Örnek Ver"
-            )}
+            Farklı Bir Örnek Ver
           </button>
         </div>
       </section>

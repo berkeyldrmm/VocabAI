@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LevelSelector } from './components/LevelSelector';
 import { WordList } from './components/WordList';
 import { SearchBar } from './components/SearchBar';
 import { WordDetail } from './components/WordDetail';
 import type { AIResponse } from './types/AIResponse';
-import { fetchAIDefinition } from './services/apiService';
+import { fetchAIDefinition, fetchWordsByLevel } from './services/apiService';
+import type { Word } from './types/Word';
 
 function App() {
   const [selectedLevel, setSelectedLevel] = useState<string>('A1');
@@ -12,7 +13,37 @@ function App() {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [aiDetails, setAiDetails] = useState<AIResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [isRegeneratingExample, setIsRegeneratingExample] = useState<boolean>(false);
+  const [words, setWords] = useState<Word[]>([]);
+
+  useEffect(() => {
+    
+    setWords([]); 
+    setSelectedWord(null); 
+    
+    async function fetchWordsForLevel() {
+      try {
+        const levelId = (() => {
+          switch (selectedLevel) {
+            case 'A1': return 1;
+            case 'A2': return 2;
+            case 'B1': return 3;
+            case 'B2': return 4;
+            case 'C1': return 5;
+            case 'C2': return 6;
+            default: return 0;
+          }
+        })();
+        const data: Word[] = await fetchWordsByLevel(levelId);
+        
+        setWords(data); 
+      } catch (error) {
+        console.error("Kelimeler alınamadı", error);
+      }
+    }
+
+    fetchWordsForLevel();
+
+  }, [selectedLevel]);
 
   const handleWordSelect = async (word: string) => {
     setSelectedWord(word);
@@ -33,7 +64,6 @@ function App() {
 
   const handleSearchSubmit = (searchWord: string) => {
     const formattedWord = searchWord.charAt(0).toUpperCase() + searchWord.slice(1).toLowerCase();
-    
     handleWordSelect(formattedWord);
   };
 
@@ -44,20 +74,13 @@ function App() {
     
     try {
       const newExampleData = await fetchAIDefinition(aiDetails.corrected_word);
-
       setAiDetails(newExampleData);
-
     } catch (error) {
       console.error('Örnek yenileme hatası:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const wordsForLevel = allWords[selectedLevel] || [];
-  const filteredWords = wordsForLevel.filter(word => 
-    word.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-600 via-indigo-700 to-blue-800 text-white p-4 md:p-12 transition-all duration-500">
@@ -78,13 +101,13 @@ function App() {
           />
           
           <LevelSelector
-            levels={Object.keys(allWords)}
+            levels={['A1', 'A2', 'B1', 'B2', 'C1', 'C2']}
             selectedLevel={selectedLevel}
             onSelectLevel={setSelectedLevel}
           />
           
           <WordList
-            words={filteredWords}
+            words={words}
             onWordSelect={handleWordSelect}
           />
         </div>
